@@ -264,3 +264,32 @@ function init() {
 
 document.addEventListener('DOMContentLoaded', init);
 
+// Easter egg: 5% chance fried chicken button that triggers jumpscare
+(function setupEasterEgg(){
+  const chance = Math.random();
+  if (chance > 0.05) return;
+  const btn = document.createElement('button');
+  btn.className = 'easter-egg-btn';
+  btn.title = 'what’s this?';
+  btn.setAttribute('aria-label', 'fried chicken');
+  btn.innerHTML = '<span>🍗</span>';
+  btn.addEventListener('click', async () => {
+    const overlay = document.createElement('div');
+    overlay.className = 'jumpscare-overlay';
+    const img = document.createElement('img');
+    img.alt = 'Ahh!';
+    img.src = 'https://i.postimg.cc/wMd6xN9S/IMG-20250723-WA0005.jpg';
+    overlay.appendChild(img);
+    overlay.addEventListener('click', () => overlay.remove());
+    document.body.appendChild(overlay);
+    try {
+      const audio = new Audio('https://www.myinstants.com/media/sounds/rahhh.mp3');
+      audio.volume = 1.0;
+      await audio.play();
+    } catch (e) {
+      // ignore autoplay restrictions; user initiated click should allow
+    }
+  });
+  document.body.appendChild(btn);
+})();
+
