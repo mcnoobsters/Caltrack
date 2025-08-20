@@ -60,6 +60,50 @@
           </div>
         </section>
 
+        <section class="card" aria-labelledby="workout-title">
+          <div class="card-header">
+            <h2 id="workout-title">Workouts</h2>
+            <div class="totals">
+              <span class="total-label">Total</span>
+              <span id="totalMinutes" class="total-value">0</span>
+              <span class="total-unit">min</span>
+            </div>
+          </div>
+          <form id="workoutForm" class="form compact" autocomplete="off">
+            <div class="dual">
+              <div class="form-row">
+                <label for="workoutName">Workout</label>
+                <input id="workoutName" name="workoutName" type="text" placeholder="e.g., Running" required />
+              </div>
+              <div class="form-row">
+                <label for="workoutType">Type</label>
+                <select id="workoutType" name="workoutType">
+                  <option value="Cardio">Cardio</option>
+                  <option value="Strength">Strength</option>
+                  <option value="Mobility">Mobility</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="dual">
+              <div class="form-row">
+                <label for="workoutMinutes">Duration (min)</label>
+                <input id="workoutMinutes" name="workoutMinutes" type="number" inputmode="decimal" min="0" step="1" placeholder="e.g., 30" required />
+              </div>
+              <div class="form-actions" style="align-self: end;">
+                <button type="submit" class="btn">Add Workout</button>
+              </div>
+            </div>
+          </form>
+          <div class="entries" style="margin-top: 12px;">
+            <ul id="workoutList" class="entry-list" aria-live="polite"></ul>
+            <div id="emptyWorkouts" class="empty-state" hidden>
+              <div class="empty-emoji" aria-hidden="true">💪</div>
+              <p>No workouts logged for this day.</p>
+            </div>
+          </div>
+        </section>
+
         <section class="card" aria-labelledby="bmi-title">
           <h2 id="bmi-title">Body & BMI</h2>
           <form id="bodyForm" class="form compact" autocomplete="off">

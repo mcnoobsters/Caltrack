@@ -1,6 +1,7 @@
 // Storage keys
 const STORAGE_KEYS = {
   entries: 'ct.entries',
+  workouts: 'ct.workouts',
   weight: 'ct.weight',
   weightUnit: 'ct.weightUnit',
   height: 'ct.height',
@@ -63,8 +64,18 @@ const bodyForm = document.getElementById('bodyForm');
 const bmiValueEl = document.getElementById('bmiValue');
 const bmiCategoryEl = document.getElementById('bmiCategory');
 
+// Workout DOM refs
+const workoutForm = document.getElementById('workoutForm');
+const workoutNameInput = document.getElementById('workoutName');
+const workoutTypeSelect = document.getElementById('workoutType');
+const workoutMinutesInput = document.getElementById('workoutMinutes');
+const workoutList = document.getElementById('workoutList');
+const emptyWorkouts = document.getElementById('emptyWorkouts');
+const totalMinutesEl = document.getElementById('totalMinutes');
+
 // State
 let entriesByDate = {};
+let workoutsByDate = {};
 
 function loadState() {
   try {
@@ -72,6 +83,12 @@ function loadState() {
     entriesByDate = raw ? JSON.parse(raw) : {};
   } catch {
     entriesByDate = {};
+  }
+  try {
+    const rawW = localStorage.getItem(STORAGE_KEYS.workouts);
+    workoutsByDate = rawW ? JSON.parse(rawW) : {};
+  } catch {
+    workoutsByDate = {};
   }
   const w = localStorage.getItem(STORAGE_KEYS.weight);
   const wu = localStorage.getItem(STORAGE_KEYS.weightUnit);
@@ -87,6 +104,10 @@ function saveEntries() {
   localStorage.setItem(STORAGE_KEYS.entries, JSON.stringify(entriesByDate));
 }
 
+function saveWorkouts() {
+  localStorage.setItem(STORAGE_KEYS.workouts, JSON.stringify(workoutsByDate));
+}
+
 function saveBody()
 {
   localStorage.setItem(STORAGE_KEYS.weight, weightInput.value);
@@ -97,6 +118,7 @@ function saveBody()
 
 function ensureDate(dateKey) {
   if (!entriesByDate[dateKey]) entriesByDate[dateKey] = [];
+  if (!workoutsByDate[dateKey]) workoutsByDate[dateKey] = [];
 }
 
 function renderEntries(dateKey) {
@@ -131,6 +153,38 @@ function renderEntries(dateKey) {
   totalCaloriesEl.textContent = String(total);
 }
 
+function renderWorkouts(dateKey) {
+  ensureDate(dateKey);
+  const list = workoutsByDate[dateKey];
+  workoutList.innerHTML = '';
+  if (!list || list.length === 0) {
+    emptyWorkouts.hidden = false;
+    totalMinutesEl.textContent = '0';
+    return;
+  }
+  emptyWorkouts.hidden = true;
+  let total = 0;
+  list.forEach((item, idx) => {
+    total += item.minutes;
+    const li = document.createElement('li');
+    li.className = 'entry-item';
+    li.innerHTML = `
+      <div class="entry-food">${item.name} <span style="color:#aab1d6">· ${item.type}</span></div>
+      <div class="entry-cal">${item.minutes} min</div>
+      <div class="entry-actions">
+        <button class="icon-btn delete" aria-label="Delete workout">✕</button>
+      </div>
+    `;
+    li.querySelector('.delete').addEventListener('click', () => {
+      workoutsByDate[dateKey].splice(idx, 1);
+      saveWorkouts();
+      renderWorkouts(dateKey);
+    });
+    workoutList.appendChild(li);
+  });
+  totalMinutesEl.textContent = String(total);
+}
+
 function rerenderBmi() {
   const weightVal = safeParseFloat(weightInput.value);
   const heightVal = safeParseFloat(heightInput.value);
@@ -162,6 +216,7 @@ entryForm.addEventListener('submit', (e) => {
 dateInput.addEventListener('change', () => {
   const key = formatDateKey(dateInput.value || new Date());
   renderEntries(key);
+  renderWorkouts(key);
 });
 
 // Persist body inputs on change and update BMI live
@@ -182,12 +237,28 @@ bodyForm.addEventListener('submit', (e) => {
   rerenderBmi();
 });
 
+workoutForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = workoutNameInput.value.trim();
+  const type = workoutTypeSelect.value;
+  const minutesNum = Math.max(0, Math.round(safeParseFloat(workoutMinutesInput.value)));
+  if (!name || !Number.isFinite(minutesNum)) return;
+  const key = formatDateKey(dateInput.value || new Date());
+  ensureDate(key);
+  workoutsByDate[key].unshift({ name, type, minutes: minutesNum });
+  saveWorkouts();
+  renderWorkouts(key);
+  workoutForm.reset();
+  workoutNameInput.focus();
+});
+
 // Init
 function init() {
   const todayKey = formatDateKey(new Date());
   dateInput.value = todayKey;
   loadState();
   renderEntries(formatDateKey(dateInput.value || new Date()));
+  renderWorkouts(formatDateKey(dateInput.value || new Date()));
   rerenderBmi();
 }
 
