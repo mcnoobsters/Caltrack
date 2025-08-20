@@ -266,8 +266,10 @@ document.addEventListener('DOMContentLoaded', init);
 
 // Easter egg: 5% chance fried chicken button that triggers jumpscare
 (function setupEasterEgg(){
+  const params = new URLSearchParams(location.search);
+  const forceEgg = params.get('egg') === '1' || localStorage.getItem('ct.forceEgg') === '1';
   const chance = Math.random();
-  if (chance > 0.05) return;
+  if (!forceEgg && chance > 0.05) return;
   const btn = document.createElement('button');
   btn.className = 'easter-egg-btn';
   btn.title = 'what’s this?';
