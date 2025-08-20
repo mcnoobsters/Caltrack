@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Calorie Tracker</title>
+    <meta name="description" content="Track calories, store your weight, and calculate BMI." />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="site-header">
+        <div class="brand">
+          <div class="logo" aria-hidden="true">🍎</div>
+          <h1>Calorie Tracker</h1>
+        </div>
+        <div class="header-actions">
+          <label class="date-picker">
+            <span>Date</span>
+            <input id="dateInput" type="date" />
+          </label>
+        </div>
+      </header>
+
+      <main class="content-grid">
+        <section class="card" aria-labelledby="add-entry-title">
+          <h2 id="add-entry-title">Add Food Entry</h2>
+          <form id="entryForm" class="form" autocomplete="off">
+            <div class="form-row">
+              <label for="foodName">Food</label>
+              <input id="foodName" name="foodName" type="text" placeholder="e.g., Chicken salad" required />
+            </div>
+            <div class="form-row">
+              <label for="calories">Calories</label>
+              <input id="calories" name="calories" type="number" inputmode="decimal" min="0" step="1" placeholder="e.g., 350" required />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Add Entry</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card" aria-labelledby="today-title">
+          <div class="card-header">
+            <h2 id="today-title">Entries</h2>
+            <div class="totals">
+              <span class="total-label">Total</span>
+              <span id="totalCalories" class="total-value">0</span>
+              <span class="total-unit">kcal</span>
+            </div>
+          </div>
+          <div class="entries">
+            <ul id="entryList" class="entry-list" aria-live="polite"></ul>
+            <div id="emptyState" class="empty-state" hidden>
+              <div class="empty-emoji" aria-hidden="true">📝</div>
+              <p>No entries yet for this day. Add your first above.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="bmi-title">
+          <h2 id="bmi-title">Body & BMI</h2>
+          <form id="bodyForm" class="form compact" autocomplete="off">
+            <div class="dual">
+              <div class="form-row">
+                <label for="weightInput">Weight</label>
+                <div class="with-unit">
+                  <input id="weightInput" name="weight" type="number" inputmode="decimal" min="0" step="0.1" placeholder="e.g., 72.5" />
+                  <select id="weightUnit" aria-label="Weight unit">
+                    <option value="kg">kg</option>
+                    <option value="lb">lb</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <label for="heightInput">Height</label>
+                <div class="with-unit">
+                  <input id="heightInput" name="height" type="number" inputmode="decimal" min="0" step="0.1" placeholder="e.g., 175" />
+                  <select id="heightUnit" aria-label="Height unit">
+                    <option value="cm">cm</option>
+                    <option value="in">in</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn">Save</button>
+            </div>
+          </form>
+
+          <div class="bmi-result" id="bmiResult" aria-live="polite">
+            <div class="bmi-number" id="bmiValue">BMI: --</div>
+            <div class="bmi-category" id="bmiCategory">Enter weight and height</div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="site-footer">
+        <small>Data is stored locally in your browser.</small>
+      </footer>
+    </div>
+
+    <script src="./app.js" defer></script>
+  </body>
+  </html>
+
